@@ -1,0 +1,87 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  PRODUCTEUR
+}
+
+
+model Utilisateur {
+  id_utilisateur Int      @id @default(autoincrement())
+  nom            String
+  prenom         String
+  email          String   @unique
+  password       String
+  tel            String?
+  service        String?
+  role           Role
+  exploitations  Exploitation[]
+  pointsVente    PointVente[]
+}
+
+model Exploitation {
+  id_exploitation Int      @id @default(autoincrement())
+  superficie      Decimal
+  adresse         String
+  description     String?
+  id_utilisateur  Int
+  utilisateur     Utilisateur @relation(fields: [id_utilisateur], references: [id_utilisateur])
+  recoltes        Recolte[]
+}
+
+model Produit {
+  id_produit          Int                   @id @default(autoincrement())
+  nom                 String
+  description         String?
+  saison              String?
+  methodes            String?
+  lotsProduitRecolte LotProduitRecolte[]
+}
+
+model Recolte {
+  id_recolte         Int                   @id @default(autoincrement())
+  statut             String   // A elever
+  quantite_recolte   Decimal
+  date_debut         DateTime?
+  date_fin           DateTime?
+  id_exploitation    Int
+  exploitation       Exploitation          @relation(fields: [id_exploitation], references: [id_exploitation])
+  lotsProduitRecolte LotProduitRecolte[]
+}
+
+model PointVente {
+  id_pointVente Int      @id @default(autoincrement())
+  nom           String
+  latitude      Decimal
+  longitude     Decimal
+  horaires      String?
+  tel           Int? // A changer mettre string
+  id_utilisateur Int
+  utilisateur   Utilisateur @relation(fields: [id_utilisateur], references: [id_utilisateur])
+}
+
+model LotProduitRecolte {
+  id_produit         Int
+  id_recolte         Int
+  // id_produit_recolte est un identifiant unique pour cette entrée spécifique du lot,
+  // distinct de la clé primaire composite.
+  id_produit_recolte Int      @id @default(autoincrement())
+  dateRecolte        DateTime
+  montantTotal       Int
+  stock_initial      Decimal
+  stock_disponible   Decimal
+
+  produit            Produit  @relation(fields: [id_produit], references: [id_produit])
+  recolte            Recolte  @relation(fields: [id_recolte], references: [id_recolte])
+}

@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",                       /* Spécifie la version ECMAScript cible. */
+    "module": "NodeNext",                     /* Spécifie la génération de code de module. 'NodeNext' est bon pour les projets Node.js modernes. */
+    "moduleResolution": "NodeNext",           /* Spécifie comment les modules sont résolus. */
+    "baseUrl": "./",                          /* Répertoire de base pour résoudre les chemins de module non relatifs. */
+    "outDir": "./dist",                       /* Répertoire de sortie pour les fichiers compilés (si vous compilez pour la production). */
+    "esModuleInterop": true,                  /* Permet l'interopérabilité entre les modules CommonJS et ES Modules. */
+    "forceConsistentCasingInFileNames": true, /* Assure la cohérence de la casse dans les noms de fichiers. */
+    "strict": true,                           /* Active toutes les options de vérification de type strictes. */
+    "skipLibCheck": true,                     /* Ignore la vérification des types des fichiers de déclaration (.d.ts). */
+    "resolveJsonModule": true                 /* Permet d'importer des fichiers .json comme des modules. */
+  },
+  "include": ["**/*.ts"],                     /* Fichiers à inclure dans la compilation. */
+  "exclude": ["node_modules", "dist"]         /* Fichiers et répertoires à exclure. */
+}
