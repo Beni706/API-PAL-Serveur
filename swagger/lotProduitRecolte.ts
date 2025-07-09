@@ -21,13 +21,17 @@
  *         id_recolte:
  *           type: integer
  *           description: Identifiant de la récolte
- *         dateRecolte:
+ *         id_pointVente:
+ *           type: integer
+ *           description: Identifiant du point de vente (optionnel)
+ *         date_recolte:
  *           type: string
  *           format: date-time
  *           description: Date de la récolte
- *         montantTotal:
- *           type: integer
- *           description: Montant total du lot
+ *         prix_unitaire:
+ *           type: number
+ *           format: float
+ *           description: Prix unitaire
  *         stock_initial:
  *           type: number
  *           format: float
@@ -36,6 +40,24 @@
  *           type: number
  *           format: float
  *           description: Stock disponible
+ *         date_peremption:
+ *           type: string
+ *           format: date-time
+ *           description: Date de péremption
+ *         notes:
+ *           type: string
+ *           description: Notes
+ *         is_active:
+ *           type: boolean
+ *           description: Statut d'activité
+ *       required:
+ *         - id_produit
+ *         - id_recolte
+ *         - date_recolte
+ *         - stock_initial
+ *         - stock_disponible
+ *         - is_active
+ *
  *     LotProduitRecolteInput:
  *       type: object
  *       properties:
@@ -43,28 +65,41 @@
  *           type: integer
  *         id_recolte:
  *           type: integer
- *         dateRecolte:
+ *         id_pointVente:
+ *           type: integer
+ *         date_recolte:
  *           type: string
  *           format: date-time
- *         montantTotal:
- *           type: integer
+ *         prix_unitaire:
+ *           type: number
+ *           format: float
  *         stock_initial:
  *           type: number
  *           format: float
  *         stock_disponible:
  *           type: number
  *           format: float
+ *         date_peremption:
+ *           type: string
+ *           format: date-time
+ *         notes:
+ *           type: string
+ *         is_active:
+ *           type: boolean
  *       required:
  *         - id_produit
  *         - id_recolte
- *         - dateRecolte
- *         - montantTotal
+ *         - date_recolte
  *         - stock_initial
  *         - stock_disponible
- */
-
-/**
- * @swagger
+ *         - is_active
+ *
+ *   securitySchemes:
+ *     bearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
+ *
  * /lotProduitRecoltes:
  *   get:
  *     summary: Récupérer la liste de tous les lots de produits récoltés
@@ -82,10 +117,36 @@
  *                 $ref: '#/components/schemas/LotProduitRecolte'
  *       500:
  *         description: Erreur interne du serveur
- */
-
-/**
- * @swagger
+ *   post:
+ *     summary: Créer un nouveau lot de produit récolté
+ *     tags: [LotProduitRecolte]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/LotProduitRecolteInput'
+ *     responses:
+ *       201:
+ *         description: Lot de produit récolté ajouté avec succès
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 lotProduitRecolte:
+ *                   $ref: '#/components/schemas/LotProduitRecolte'
+ *       400:
+ *         description: Tous les champs sont requis
+ *       404:
+ *         description: Produit ou Récolte non trouvé
+ *       500:
+ *         description: Erreur interne du serveur
+ *
  * /lotProduitRecoltes/{id}:
  *   get:
  *     summary: Récupérer un lot de produit récolté par son ID
@@ -107,43 +168,9 @@
  *             schema:
  *               $ref: '#/components/schemas/LotProduitRecolte'
  *       404:
- *         description: Lot de produit récolté non trouvé
+ *         description: lotProduitRecolte non trouvée
  *       500:
  *         description: Erreur interne du serveur
- */
-
-/**
- * @swagger
- * /lotProduitRecoltes:
- *   post:
- *     summary: Créer un nouveau lot de produit récolté
- *     tags: [LotProduitRecolte]
- *     security:
- *       - bearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/LotProduitRecolteInput'
- *     responses:
- *       201:
- *         description: Lot de produit récolté ajouté avec succès
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/LotProduitRecolte'
- *       400:
- *         description: Champs requis manquants
- *       404:
- *         description: Produit ou Récolte non trouvé
- *       500:
- *         description: Erreur interne du serveur
- */
-
-/**
- * @swagger
- * /lotProduitRecoltes/{id}:
  *   put:
  *     summary: Modifier un lot de produit récolté existant
  *     tags: [LotProduitRecolte]
@@ -168,16 +195,16 @@
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/LotProduitRecolte'
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 lotProduitRecolte:
+ *                   $ref: '#/components/schemas/LotProduitRecolte'
  *       404:
- *         description: Lot de produit récolté non trouvé
+ *         description: lotProduitRecolte non trouvée
  *       500:
  *         description: Erreur interne du serveur
- */
-
-/**
- * @swagger
- * /lotProduitRecoltes/{id}:
  *   delete:
  *     summary: Supprimer un lot de produit récolté
  *     tags: [LotProduitRecolte]
@@ -193,8 +220,15 @@
  *     responses:
  *       200:
  *         description: Lot de produit récolté supprimé avec succès
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
  *       404:
- *         description: Lot de produit récolté non trouvé
+ *         description: lotProduitRecolte non trouvée
  *       500:
  *         description: Erreur interne du serveur
  */

@@ -30,9 +30,20 @@
  *           type: string
  *           format: date-time
  *           description: Date de fin de la récolte
+ *         notes:
+ *           type: string
+ *           description: Notes
+ *         is_active:
+ *           type: boolean
+ *           description: Statut d'activité
  *         id_exploitation:
  *           type: integer
  *           description: Identifiant de l'exploitation
+ *       required:
+ *         - statut
+ *         - quantite_recolte
+ *         - id_exploitation
+ *
  *     RecolteInput:
  *       type: object
  *       properties:
@@ -47,17 +58,24 @@
  *         date_fin:
  *           type: string
  *           format: date-time
+ *         notes:
+ *           type: string
+ *         is_active:
+ *           type: boolean
  *         id_exploitation:
  *           type: integer
  *       required:
  *         - statut
  *         - quantite_recolte
+ *         - is_active
  *         - id_exploitation
- */
-
-
-/**
- * @swagger
+ *
+ *   securitySchemes:
+ *     bearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
+ *
  * /recoltes:
  *   get:
  *     summary: Récupérer la liste de toutes les récoltes
@@ -75,10 +93,36 @@
  *                 $ref: '#/components/schemas/Recolte'
  *       500:
  *         description: Erreur interne du serveur
- */
-
-/**
- * @swagger
+ *   post:
+ *     summary: Créer une nouvelle récolte
+ *     tags: [Recolte]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/RecolteInput'
+ *     responses:
+ *       201:
+ *         description: Récolte créée avec succès
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 recolte:
+ *                   $ref: '#/components/schemas/Recolte'
+ *       400:
+ *         description: Tous les champs sont obligatoires
+ *       404:
+ *         description: Exploitation non trouvée
+ *       500:
+ *         description: Erreur interne du serveur
+ *
  * /recoltes/{id}:
  *   get:
  *     summary: Récupérer une récolte par son ID
@@ -100,43 +144,9 @@
  *             schema:
  *               $ref: '#/components/schemas/Recolte'
  *       404:
- *         description: Récolte non trouvée
+ *         description: Recolte non trouvée
  *       500:
  *         description: Erreur interne du serveur
- */
-
-/**
- * @swagger
- * /recoltes:
- *   post:
- *     summary: Créer une nouvelle récolte
- *     tags: [Recolte]
- *     security:
- *       - bearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/RecolteInput'
- *     responses:
- *       201:
- *         description: Récolte ajoutée avec succès
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Recolte'
- *       400:
- *         description: Champs requis manquants
- *       404:
- *         description: Exploitation non trouvée
- *       500:
- *         description: Erreur interne du serveur
- */
-
-/**
- * @swagger
- * /recoltes/{id}:
  *   put:
  *     summary: Modifier une récolte existante
  *     tags: [Recolte]
@@ -161,16 +171,16 @@
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Recolte'
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 recolte:
+ *                   $ref: '#/components/schemas/Recolte'
  *       404:
- *         description: Récolte non trouvée
+ *         description: Recolte non trouvée
  *       500:
  *         description: Erreur interne du serveur
- */
-
-/**
- * @swagger
- * /recoltes/{id}:
  *   delete:
  *     summary: Supprimer une récolte
  *     tags: [Recolte]
@@ -186,8 +196,15 @@
  *     responses:
  *       200:
  *         description: Récolte supprimée avec succès
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
  *       404:
- *         description: Récolte non trouvée
+ *         description: Recolte non trouvée
  *       500:
  *         description: Erreur interne du serveur
  */

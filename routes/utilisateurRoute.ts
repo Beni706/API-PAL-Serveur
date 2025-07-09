@@ -14,13 +14,13 @@ import {
 export const utilisateurRouter = express.Router(); // Création du routeur
 
 // Définition des routes
-utilisateurRouter.get('/', authenticateToken, getAllUtilisateurs); // Route pour obtenir tous les utilisateurs
+utilisateurRouter.get('/', getAllUtilisateurs); // Route pour obtenir tous les utilisateurs
 
-utilisateurRouter.get("/:id", authenticateToken, getUtillisateurById); // Route pour obtenir un utilisateur par ID
+utilisateurRouter.get("/:id", getUtillisateurById); // Route pour obtenir un utilisateur par ID
 
-utilisateurRouter.get("/exploitation/:id", authenticateToken, getAllExploitationByUtilisateur) // Route pour obtenire les exploitation d'un utilisateur
+utilisateurRouter.get("/exploitation/:id", getAllExploitationByUtilisateur) // Route pour obtenire les exploitation d'un utilisateur
 
-utilisateurRouter.get("/pointVente/:id", authenticateToken, getAllPointVenteByUtilisateur) // Route pour obtenir les point de vente d'un utilisateur
+utilisateurRouter.get("/pointVente/:id", getAllPointVenteByUtilisateur) // Route pour obtenir les point de vente d'un utilisateur
 
 utilisateurRouter.post("/", authenticateToken, createUtilisateur ); // Route pour créer un nouvel utilisateur
 

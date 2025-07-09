@@ -21,12 +21,30 @@
  *         description:
  *           type: string
  *           description: Description du produit
+ *         categorie:
+ *           type: string
+ *           description: Catégorie du produit
+ *         unite:
+ *           type: string
+ *           description: Unité de mesure
  *         saison:
  *           type: string
  *           description: Saison du produit
  *         methodes:
  *           type: string
  *           description: Méthodes de production
+ *         image_url:
+ *           type: string
+ *           description: URL de l'image
+ *         is_active:
+ *           type: boolean
+ *           description: Statut d'activité
+ *       required:
+ *         - nom
+ *         - categorie
+ *         - unite
+ *         - is_active
+ *
  *     ProduitInput:
  *       type: object
  *       properties:
@@ -34,17 +52,30 @@
  *           type: string
  *         description:
  *           type: string
+ *         categorie:
+ *           type: string
+ *         unite:
+ *           type: string
  *         saison:
  *           type: string
  *         methodes:
  *           type: string
+ *         image_url:
+ *           type: string
+ *         is_active:
+ *           type: boolean
  *       required:
  *         - nom
- */
-
-
-/**
- * @swagger
+ *         - categorie
+ *         - unite
+ *         - is_active
+ *
+ *   securitySchemes:
+ *     bearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
+ *
  * /produits:
  *   get:
  *     summary: Récupérer la liste de tous les produits
@@ -79,15 +110,17 @@
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Produit'
+ *               type: object
+ *               properties:
+ *                 Message:
+ *                   type: string
+ *                 produit:
+ *                   $ref: '#/components/schemas/Produit'
  *       400:
- *         description: Champs requis manquants
+ *         description: Tous les champs sont requis
  *       500:
  *         description: Erreur interne du serveur
- */
-
-/**
- * @swagger
+ *
  * /produits/{id}:
  *   get:
  *     summary: Récupérer un produit par son ID
@@ -136,7 +169,12 @@
  *         content:
  *           application/json:
  *             schema:
- *               $ref: '#/components/schemas/Produit'
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 produit:
+ *                   $ref: '#/components/schemas/Produit'
  *       404:
  *         description: Produit non trouvé
  *       500:
@@ -156,6 +194,13 @@
  *     responses:
  *       200:
  *         description: Produit supprimé avec succès
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 Message:
+ *                   type: string
  *       404:
  *         description: Produit non trouvé
  *       500:

@@ -18,6 +18,9 @@
  *         nom:
  *           type: string
  *           description: Nom du point de vente
+ *         adresse:
+ *           type: string
+ *           description: Adresse du point de vente
  *         latitude:
  *           type: number
  *           description: Latitude du point de vente
@@ -28,12 +31,31 @@
  *           type: string
  *           description: Horaires d'ouverture
  *         tel:
- *           type: integer
+ *           type: string
  *           description: Téléphone
+ *         description:
+ *           type: string
+ *           description: Description
+ *         is_active:
+ *           type: boolean
+ *           description: Statut d'activité
+ *         id_utilisateur:
+ *           type: integer
+ *           description: Identifiant de l'utilisateur
+ *       required:
+ *         - nom
+ *         - adresse
+ *         - latitude
+ *         - longitude
+ *         - is_active
+ *         - id_utilisateur
+ *
  *     PointVenteInput:
  *       type: object
  *       properties:
  *         nom:
+ *           type: string
+ *         adresse:
  *           type: string
  *         latitude:
  *           type: number
@@ -42,17 +64,21 @@
  *         horaires:
  *           type: string
  *         tel:
+ *           type: string
+ *         description:
+ *           type: string
+ *         is_active:
+ *           type: boolean
+ *         id_utilisateur:
  *           type: integer
  *       required:
  *         - nom
+ *         - adresse
  *         - latitude
  *         - longitude
- */
-
-
-/**
- * @swagger
- * components:
+ *         - is_active
+ *         - id_utilisateur
+ *
  *   securitySchemes:
  *     bearerAuth:
  *       type: http
@@ -69,6 +95,14 @@
  *     responses:
  *       200:
  *         description: Liste des points de vente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/PointVente'
+ *       500:
+ *         description: Erreur interne du serveur
  *   post:
  *     summary: Crée un nouveau point de vente
  *     tags:
@@ -80,32 +114,25 @@
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             required:
- *               - nom
- *               - latitude
- *               - longitude
- *               - id_utilisateur
- *             properties:
- *               nom:
- *                 type: string
- *               latitude:
- *                 type: number
- *               longitude:
- *                 type: number
- *               horaires:
- *                 type: string
- *               tel:
- *                 type: string
- *               id_utilisateur:
- *                 type: integer
+ *             $ref: '#/components/schemas/PointVenteInput'
  *     responses:
  *       201:
  *         description: Point de vente ajouté avec succès
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 pointVente:
+ *                   $ref: '#/components/schemas/PointVente'
  *       400:
  *         description: Tous les champs sont requis
  *       404:
  *         description: Utilisateur non trouvé
+ *       500:
+ *         description: Erreur interne du serveur
  *
  * /pointVentes/{id}:
  *   get:
@@ -124,8 +151,14 @@
  *     responses:
  *       200:
  *         description: Point de vente trouvé
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/PointVente'
  *       404:
- *         description: Point de vente non trouvé
+ *         description: pointVente non trouvée
+ *       500:
+ *         description: Erreur interne du serveur
  *   put:
  *     summary: Met à jour un point de vente par ID
  *     tags:
@@ -144,25 +177,23 @@
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             properties:
- *               nom:
- *                 type: string
- *               latitude:
- *                 type: number
- *               longitude:
- *                 type: number
- *               horaires:
- *                 type: string
- *               tel:
- *                 type: string
- *               id_utilisateur:
- *                 type: integer
+ *             $ref: '#/components/schemas/PointVenteInput'
  *     responses:
  *       200:
  *         description: Point de vente mis à jour avec succès
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 pointVente:
+ *                   $ref: '#/components/schemas/PointVente'
  *       404:
- *         description: Point de vente non trouvé
+ *         description: pointVente non trouvée
+ *       500:
+ *         description: Erreur interne du serveur
  *   delete:
  *     summary: Supprime un point de vente par ID
  *     tags:
@@ -179,6 +210,15 @@
  *     responses:
  *       200:
  *         description: Point de vente supprimé avec succès
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
  *       404:
- *         description: Point de vente non trouvé
+ *         description: pointVente non trouvée
+ *       500:
+ *         description: Erreur interne du serveur
  */

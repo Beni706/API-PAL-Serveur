@@ -11,12 +11,18 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// Enums
 enum Role {
   ADMIN
   PRODUCTEUR
 }
 
+enum StatutRecolte {
+  DISPONIBLE
+  EPUISE
+}
 
+// Tables principales
 model Utilisateur {
   id_utilisateur Int      @id @default(autoincrement())
   nom            String
@@ -26,62 +32,105 @@ model Utilisateur {
   tel            String?
   service        String?
   role           Role
+  is_active      Boolean  @default(true)
+
+  // Relations
   exploitations  Exploitation[]
   pointsVente    PointVente[]
+
+  @@map("utilisateurs")
 }
 
 model Exploitation {
   id_exploitation Int      @id @default(autoincrement())
+  nom             String
   superficie      Decimal
   adresse         String
+  latitude        Decimal?
+  longitude       Decimal?
   description     String?
+  is_active       Boolean  @default(true)
   id_utilisateur  Int
-  utilisateur     Utilisateur @relation(fields: [id_utilisateur], references: [id_utilisateur])
+
+  // Relations
+  utilisateur     Utilisateur @relation(fields: [id_utilisateur], references: [id_utilisateur], onDelete: Cascade)
   recoltes        Recolte[]
+
+  @@map("exploitations")
 }
 
 model Produit {
   id_produit          Int                   @id @default(autoincrement())
   nom                 String
   description         String?
+  categorie           String                // Légumes, Fruits, etc.
+  unite               String                // kg, litre, pièce
   saison              String?
   methodes            String?
+  image_url           String?
+  is_active           Boolean               @default(true)
+
+  // Relations
   lotsProduitRecolte LotProduitRecolte[]
+
+  @@map("produits")
 }
 
 model Recolte {
   id_recolte         Int                   @id @default(autoincrement())
-  statut             String   // A elever
+  statut             StatutRecolte         
   quantite_recolte   Decimal
   date_debut         DateTime?
   date_fin           DateTime?
+  notes              String?
+  is_active          Boolean               @default(true)
   id_exploitation    Int
-  exploitation       Exploitation          @relation(fields: [id_exploitation], references: [id_exploitation])
+
+  // Relations
+  exploitation       Exploitation          @relation(fields: [id_exploitation], references: [id_exploitation], onDelete: Cascade)
   lotsProduitRecolte LotProduitRecolte[]
+
+  @@map("recoltes")
 }
 
 model PointVente {
-  id_pointVente Int      @id @default(autoincrement())
-  nom           String
-  latitude      Decimal
-  longitude     Decimal
-  horaires      String?
-  tel           Int? // A changer mettre string
-  id_utilisateur Int
-  utilisateur   Utilisateur @relation(fields: [id_utilisateur], references: [id_utilisateur])
+  id_pointVente   Int      @id @default(autoincrement())
+  nom             String
+  adresse         String
+  latitude        Decimal
+  longitude       Decimal
+  horaires        String?
+  tel             String?  // Corrigé: String au lieu de Int
+  description     String?
+  is_active       Boolean  @default(true)
+  id_utilisateur  Int?     // Rendu optionnel
+
+  // Relations
+  utilisateur     Utilisateur? @relation(fields: [id_utilisateur], references: [id_utilisateur], onDelete: SetNull)
+  lotsProduitRecolte LotProduitRecolte[]
+
+  @@map("points_vente")
 }
 
 model LotProduitRecolte {
+  id_produit_recolte Int      @id @default(autoincrement())
   id_produit         Int
   id_recolte         Int
-  // id_produit_recolte est un identifiant unique pour cette entrée spécifique du lot,
-  // distinct de la clé primaire composite.
-  id_produit_recolte Int      @id @default(autoincrement())
-  dateRecolte        DateTime
-  montantTotal       Int
+  id_pointVente     Int?     // Optionnel pour permettre la vente directe
+  date_recolte       DateTime
+  prix_unitaire      Decimal?
   stock_initial      Decimal
   stock_disponible   Decimal
+  date_peremption    DateTime?
+  notes              String?
+  is_active          Boolean  @default(true)
 
-  produit            Produit  @relation(fields: [id_produit], references: [id_produit])
-  recolte            Recolte  @relation(fields: [id_recolte], references: [id_recolte])
+  // Relations
+  produit            Produit     @relation(fields: [id_produit], references: [id_produit], onDelete: Cascade)
+  recolte            Recolte     @relation(fields: [id_recolte], references: [id_recolte], onDelete: Cascade)
+  pointVente         PointVente? @relation(fields: [id_pointVente], references: [id_pointVente], onDelete: SetNull)
+
+  // Index pour optimiser les requêtes
+  @@unique([id_produit, id_recolte, id_pointVente])
+  @@map("lots_produit_recolte")
 }

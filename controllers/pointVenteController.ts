@@ -38,10 +38,10 @@ export const getAllpointVenteById = async (req: Request, res: Response) => {
 // Fonction pour créer une nouvelle pointVente
 export const createpointVente = async (req: Request, res: Response) => {
   try {
-    const { nom, latitude, longitude, horaires, tel, id_utilisateur } = req.body;
+    const { nom, adresse, latitude, longitude, horaires, tel, description, is_active, id_utilisateur } = req.body;
 
     // Vérification des données requises
-    if (!nom || !latitude || !longitude || !id_utilisateur) {
+    if (!nom || !adresse || !latitude || !longitude || !is_active ) {
       res.status(400).json({ message: "Tous les champs sont requis" });
       return;
     }
@@ -59,10 +59,13 @@ export const createpointVente = async (req: Request, res: Response) => {
     const pointVente = await prisma.pointVente.create({
       data: {
         nom: nom,
+        adresse: adresse,
         latitude: latitude,
         longitude: longitude,
         horaires: horaires,
         tel: tel,
+        description: description,
+        is_active: is_active, // Par défaut, l'exploitation est active
         id_utilisateur: parseInt(id_utilisateur, 10),
       },
     });
@@ -80,7 +83,7 @@ export const createpointVente = async (req: Request, res: Response) => {
 export const updatepointVente = async (req: Request, res: Response) => {
   try {
     const id = parseInt(req.params.id, 10);
-    const { nom, latitude, longitude, horaires, tel, id_utilisateur } = req.body;
+    const { nom, adresse, latitude, longitude, horaires, tel, description, is_active, id_utilisateur } = req.body;
 
     // Vérification si l'pointVente existe}
     const existepointVente = await prisma.pointVente.findUnique({
@@ -94,10 +97,13 @@ export const updatepointVente = async (req: Request, res: Response) => {
     // Preparation des données
     const donneeAChanger: Prisma.PointVenteUpdateInput = {};
     if (nom !== undefined) donneeAChanger.nom = nom;
+    if (adresse !== undefined) donneeAChanger.adresse = adresse;
     if (latitude !== undefined) donneeAChanger.latitude = latitude;
     if (longitude !== undefined) donneeAChanger.longitude = longitude;
     if (horaires !== undefined) donneeAChanger.horaires = horaires;
     if (tel !== undefined) donneeAChanger.tel = tel;
+    if (description !== undefined) donneeAChanger.description = description;
+    if (is_active !== undefined) donneeAChanger.is_active = is_active;
     if (id_utilisateur !== undefined) donneeAChanger.utilisateur = {
             connect: { id_utilisateur: parseInt(id_utilisateur, 10) }
         };

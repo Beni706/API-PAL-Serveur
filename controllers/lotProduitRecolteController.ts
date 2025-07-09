@@ -40,10 +40,21 @@ export const getAlllotProduitRecolteById = async (req: Request, res: Response) =
 // Fonction pour créer une nouvelle lotProduitRecolte
 export const createlotProduitRecolte = async (req: Request, res: Response) => {
   try {
-    const { id_produit, id_recolte, dateRecolte, montantTotal, stock_initial, stock_disponible } = req.body;
+    const { 
+      id_produit, 
+      id_recolte, 
+      id_pointVente, 
+      date_recolte, 
+      prix_unitaire, 
+      stock_initial, 
+      stock_disponible, 
+      date_peremption, 
+      notes, 
+      is_active 
+    } = req.body;
 
     // Vérification des données requises
-    if (!id_produit || !id_recolte || !dateRecolte || !montantTotal || !stock_initial || !stock_disponible) {
+    if (!id_produit || !id_recolte || !date_recolte  || !stock_initial || !stock_disponible || !is_active) {
       res.status(400).json({ message: "Tous les champs sont requis" });
       return;
     }
@@ -70,11 +81,15 @@ export const createlotProduitRecolte = async (req: Request, res: Response) => {
     const lotProduitRecolte = await prisma.lotProduitRecolte.create({
       data: {
         id_produit: parseInt(id_produit, 10), 
-        id_recolte: parseInt(id_recolte, 10), 
-        dateRecolte, 
-        montantTotal, 
+        id_recolte: parseInt(id_recolte, 10),
+        id_pointVente: id_pointVente ? parseInt(id_pointVente, 10) : null, // Optionnel 
+        date_recolte, 
+        prix_unitaire: parseFloat(prix_unitaire), 
         stock_initial, 
-        stock_disponible
+        stock_disponible,
+        date_peremption, 
+        notes, 
+        is_active
       },
     });
     res
@@ -91,7 +106,18 @@ export const createlotProduitRecolte = async (req: Request, res: Response) => {
 export const updatelotProduitRecolte = async (req: Request, res: Response) => {
   try {
     const id = parseInt(req.params.id, 10);
-    const { id_produit, id_recolte, dateRecolte, montantTotal, stock_initial, stock_disponible } = req.body;
+    const { 
+      id_produit, 
+      id_recolte, 
+      id_pointVente, 
+      date_recolte, 
+      prix_unitaire, 
+      stock_initial, 
+      stock_disponible, 
+      date_peremption, 
+      notes, 
+      is_active 
+    } = req.body;
 
     // Vérification si l'lotProduitRecolte existe}
     const existelotProduitRecolte = await prisma.lotProduitRecolte.findUnique({
@@ -110,10 +136,16 @@ export const updatelotProduitRecolte = async (req: Request, res: Response) => {
     if (id_recolte !== undefined) donneeAChanger.recolte = {
         connect: { id_recolte: parseInt(id_recolte, 10) }
        };
-    if (dateRecolte !== undefined) donneeAChanger.dateRecolte = dateRecolte;
-    if (montantTotal !== undefined) donneeAChanger.montantTotal = montantTotal;
+    if (id_pointVente !== undefined) donneeAChanger.pointVente = {
+        connect: { id_pointVente: parseInt(id_pointVente, 10) }
+       };
+    if (date_recolte !== undefined) donneeAChanger.date_recolte = date_recolte;
+    if (prix_unitaire !== undefined) donneeAChanger.prix_unitaire = parseFloat(prix_unitaire);
     if (stock_initial !== undefined) donneeAChanger.stock_initial = stock_initial;
     if (stock_disponible !== undefined) donneeAChanger.stock_disponible = stock_disponible;
+    if (date_peremption !== undefined) donneeAChanger.date_peremption = date_peremption;
+    if (notes !== undefined) donneeAChanger.notes = notes;
+    if (is_active !== undefined) donneeAChanger.is_active = is_active;
 
     const lotProduitRecolte = await prisma.lotProduitRecolte.update({
         where: { id_produit_recolte: id },

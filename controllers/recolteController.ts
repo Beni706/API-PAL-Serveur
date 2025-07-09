@@ -41,10 +41,10 @@ export const getRecolteById = async (req: Request, res: Response) => {
 // Fonction pour créer une nouvelle recolte
 export const createRecolte = async (req: Request, res: Response) => {
     try {
-        const {statut, quantite_recolte, date_debut, date_fin, id_exploitation } = req.body;
+        const {statut, quantite_recolte, date_debut, date_fin, notes, is_active, id_exploitation } = req.body;
 
         // Verification des champs
-        if (!statut || !quantite_recolte || !id_exploitation) {
+        if (!statut || !quantite_recolte || !is_active|| !id_exploitation) {
             res.status(400).json({ error: "Tous les champs sont obligatoires" });
             return;
         }
@@ -65,6 +65,8 @@ export const createRecolte = async (req: Request, res: Response) => {
                 quantite_recolte,
                 date_debut,
                 date_fin,
+                notes,
+                is_active,
                 id_exploitation: parseInt(id_exploitation),
             },
         });
@@ -82,7 +84,7 @@ export const createRecolte = async (req: Request, res: Response) => {
 export const updateRecolte = async (req: Request, res: Response) => {
     try {
         const id = parseInt(req.params.id, 10); // Recupérer l'ID sur les parametre de la requête
-        const {statut, quantite_recolte, date_debut, date_fin, id_exploitation } = req.body;
+        const {statut, quantite_recolte, date_debut, date_fin, notes, is_active, id_exploitation } = req.body;
 
         // Verification si la recolte existe
         const existeRecolte = await prisma.recolte.findUnique({
@@ -99,6 +101,10 @@ export const updateRecolte = async (req: Request, res: Response) => {
             if(quantite_recolte !== undefined) donneeAChanger.quantite_recolte = quantite_recolte;
             if(date_debut !== undefined) donneeAChanger.date_debut = date_debut;
             if(date_fin !== undefined) donneeAChanger.date_fin = date_fin;
+            if(notes !== undefined) donneeAChanger.notes = notes;
+            if(is_active !== undefined) donneeAChanger.is_active = is_active;
+            // Si l'ID de l'exploitation est fourni, on le connecte
+            // Sinon, on ne le modifie pas
             if(id_exploitation !== undefined) donneeAChanger.exploitation = {
                 connect: { id_exploitation: parseInt(id_exploitation) },
             };

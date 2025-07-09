@@ -5,8 +5,8 @@ import { getAlllotProduitRecolte, getAlllotProduitRecolteById, createlotProduitR
 export const lotProduitRecolteRouter = express.Router(); // Création du routeur
 
 // Définition des routes
-lotProduitRecolteRouter.get('/', authenticateToken, getAlllotProduitRecolte); // Route pour obtenir toutes les lotProduitRecoltes
-lotProduitRecolteRouter.get("/:id", authenticateToken, getAlllotProduitRecolteById); // Route pour obtenir une lotProduitRecolte par ID 
+lotProduitRecolteRouter.get('/', getAlllotProduitRecolte); // Route pour obtenir toutes les lotProduitRecoltes
+lotProduitRecolteRouter.get("/:id", getAlllotProduitRecolteById); // Route pour obtenir une lotProduitRecolte par ID 
 lotProduitRecolteRouter.post("/", authenticateToken, createlotProduitRecolte); // Route pour créer une nouvelle lotProduitRecolte
 lotProduitRecolteRouter.put("/:id", authenticateToken, updatelotProduitRecolte); // Route pour mettre à jour une lotProduitRecolte par ID
 lotProduitRecolteRouter.delete("/:id", authenticateToken, deletelotProduitRecolte); // Route pour supprimer une lotProduitRecolte par ID
