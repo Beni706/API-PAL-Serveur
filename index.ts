@@ -30,7 +30,7 @@ app.use("/utilisateurs", utilisateurRouter);
 app.use("/exploitations", exploitationRouter);
 app.use("/produits", produitRouter);
 app.use("/recoltes", recolteRouter);
-app.use("/pointVentes", pointVenteRouter);
+app.use("/points-vente", pointVenteRouter);
 app.use("/lotProduitRecoltes", lotProduitRecolteRouter);
 
 

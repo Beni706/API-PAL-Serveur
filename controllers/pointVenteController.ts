@@ -46,16 +46,24 @@ export const createpointVente = async (req: Request, res: Response) => {
       return;
     }
 
-    // Verification si l'ID de l'utilisateur existe
-    const existeUtilisateur = await prisma.utilisateur.findUnique({
-      where: { id_utilisateur: parseInt(id_utilisateur, 10) },
-    });
-    if (!existeUtilisateur) {
-      res.status(404).json({ message: "Utilisateur non trouvé" });
-      return;
+    // Si id_utilisateur est fourni, vérifier qu'il existe, sinon ignorer
+    let utilisateurId: number | null = null;
+    if (id_utilisateur !== undefined && id_utilisateur !== null && id_utilisateur !== "") {
+      if (isNaN(Number(id_utilisateur))) {
+        res.status(400).json({ message: "id_utilisateur invalide" });
+        return
+      }
+      const existeUtilisateur = await prisma.utilisateur.findUnique({
+        where: { id_utilisateur: Number(id_utilisateur) },
+      });
+      if (!existeUtilisateur) {
+        res.status(404).json({ message: "Utilisateur non trouvé" });
+        return;
+      }
+      utilisateurId = Number(id_utilisateur);
     }
 
-    // Création de l'pointVente
+    // Création du point de vente (id_utilisateur peut être null)
     const pointVente = await prisma.pointVente.create({
       data: {
         nom: nom,
@@ -66,7 +74,7 @@ export const createpointVente = async (req: Request, res: Response) => {
         tel: tel,
         description: description,
         is_active: is_active, // Par défaut, l'exploitation est active
-        id_utilisateur: parseInt(id_utilisateur, 10),
+        id_utilisateur: utilisateurId,
       },
     });
     res

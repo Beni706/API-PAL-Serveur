@@ -1,5 +1,6 @@
 import { Prisma, PrismaClient } from "../generated/prisma";
 import { Request, Response } from "express";
+import path from "path";
 
 const prisma = new PrismaClient(); // Creation d'une instanse de PrismaClient
 
@@ -28,6 +29,7 @@ export const getProduitById = async (req: Request, res: Response) => {
       res.status(404).json({ message: "Produits non trouvé" });
       return;
     }
+    res.status(200).json(existeProduit);
   } catch (error) {
     console.error("Erreur interne du serveur", error);
     res.status(500).json({ message: "Erreur interne du serveur" });
@@ -37,15 +39,22 @@ export const getProduitById = async (req: Request, res: Response) => {
 //Fonction pour créer un produit
 export const createProduit = async (req: Request, res: Response) => {
   try {
-    const { nom, description, categorie, unite, saison, methodes, image_url, is_active } = req.body;
+    const {
+      nom,
+      description,
+      categorie,
+      unite,
+      saison,
+      methodes,
+      image_url,
+      is_active,
+    } = req.body;
 
-    // Verification des champs
     if (!nom || !categorie || !unite || !is_active) {
       res.status(400).json({ message: "Tous les champs sont requis" });
       return;
     }
 
-    // création du produit
     const produit = await prisma.produit.create({
       data: {
         nom,
@@ -54,14 +63,14 @@ export const createProduit = async (req: Request, res: Response) => {
         unite,
         saison,
         methodes,
-        image_url,
-        is_active, // Par défaut, le produit est actif
+        image_url, // le lien public envoyé par le frontend
+        is_active,
       },
     });
-    res.status(201).json({ Message: "Produit ajouter avec succès", produit });
+    res.status(201).json({ Message: "Produit ajouté avec succès", produit });
   } catch (error) {
-    console.error("Erreur interne du server", error);
-    res.status(500).json({ message: " Erreur interne du server" });
+    console.error("Erreur interne du serveur", error);
+    res.status(500).json({ message: "Erreur interne du serveur" });
   }
 };
 
@@ -69,7 +78,16 @@ export const createProduit = async (req: Request, res: Response) => {
 export const updateProduit = async (req: Request, res: Response) => {
   try {
     const id = parseInt(req.params.id, 10);
-    const { nom, description, categorie, unite, saison, methodes, image_url, is_active } = req.body;
+    const {
+      nom,
+      description,
+      categorie,
+      unite,
+      saison,
+      methodes,
+      image_url,
+      is_active,
+    } = req.body;
 
     // Verification si le produit existe
     const existeProduit = await prisma.produit.findUnique({
